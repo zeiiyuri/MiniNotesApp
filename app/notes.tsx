@@ -1,36 +1,36 @@
 import {
   Alert,
   FlatList,
-  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { deleteNote, getNotes } from "../lib/database";
 
 export default function NotesScreen() {
   const [notes, setNotes] = useState<any[]>([]);
 
-  // ✅ LOAD NOTES (SYNC VERSION)
+  // ✅ ALWAYS FRESH LOAD WHEN SCREEN IS OPENED
   const loadNotes = () => {
-    const data = getNotes();
-    setNotes(data);
+    try {
+      const data = getNotes();
+      setNotes(data || []);
+    } catch (error) {
+      console.log("LOAD ERROR:", error);
+      setNotes([]);
+    }
   };
 
-  useEffect(() => {
-    loadNotes();
-
-    // auto refresh so UI updates after add/edit/delete
-    const interval = setInterval(() => {
+  // ✅ FIX 1: LOAD WHEN SCREEN IS FOCUSED (IMPORTANT FIX)
+  useFocusEffect(
+    useCallback(() => {
       loadNotes();
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -38,59 +38,62 @@ export default function NotesScreen() {
 
       <FlatList
         data={notes}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => String(item.id)}
+        extraData={notes}
         renderItem={({ item }) => (
-          <View style={styles.card}>
-            {/* TITLE */}
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() =>
+              router.push({
+                pathname: "/detail",
+                params: {
+                  id: item.id,
+                  title: item.title,
+                  category: item.category,
+                  image: item.image,
+                  noteText: item.noteText,
+                },
+              })
+            }
+          >
             <Text style={styles.noteTitle}>{item.title}</Text>
-
-            {/* CATEGORY */}
             <Text style={styles.category}>{item.category}</Text>
 
-            {/* IMAGE */}
-            {item.image ? (
-              <Image source={{ uri: item.image }} style={styles.image} />
-            ) : null}
+            <View style={styles.row}>
+              <TouchableOpacity
+                style={styles.edit}
+                onPress={() =>
+                  router.push({
+                    pathname: "/detail",
+                    params: item,
+                  })
+                }
+              >
+                <Text style={styles.btnText}>Edit</Text>
+              </TouchableOpacity>
 
-            {/* EDIT BUTTON */}
-            <TouchableOpacity
-              style={styles.editBtn}
-              onPress={() =>
-                router.push({
-                  pathname: "/edit-note",
-                  params: {
-                    id: item.id,
-                    title: item.title,
-                    category: item.category,
-                    image: item.image,
-                  },
-                })
-              }
-            >
-              <Text style={styles.btnText}>Edit</Text>
-            </TouchableOpacity>
-
-            {/* DELETE BUTTON */}
-            <TouchableOpacity
-              style={styles.deleteBtn}
-              onPress={() =>
-                Alert.alert("Delete Note", "Are you sure?", [
-                  { text: "Cancel", style: "cancel" },
-                  {
-                    text: "Delete",
-                    style: "destructive",
-                    onPress: () => deleteNote(item.id),
-                  },
-                ])
-              }
-            >
-              <Text style={styles.btnText}>Delete</Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                style={styles.delete}
+                onPress={() =>
+                  Alert.alert("Delete", "Are you sure?", [
+                    { text: "Cancel" },
+                    {
+                      text: "Delete",
+                      onPress: () => {
+                        deleteNote(item.id);
+                        loadNotes(); // ✅ refresh instantly
+                      },
+                    },
+                  ])
+                }
+              >
+                <Text style={styles.btnText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
         )}
       />
 
-      {/* ADD BUTTON */}
       <TouchableOpacity
         style={styles.addBtn}
         onPress={() => router.push("/add-note")}
@@ -106,8 +109,10 @@ export default function NotesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#f5f5f5",
+    paddingTop: 80,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    backgroundColor: "#f2f2f2",
   },
 
   title: {
@@ -119,42 +124,41 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     padding: 15,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 3,
+    marginBottom: 10,
+    borderRadius: 10,
   },
 
   noteTitle: {
-    fontSize: 18,
     fontWeight: "bold",
+    fontSize: 16,
   },
 
   category: {
     color: "gray",
-    marginBottom: 5,
+    marginBottom: 10,
   },
 
-  image: {
-    width: "100%",
-    height: 180,
-    borderRadius: 10,
-    marginTop: 10,
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 
-  editBtn: {
-    backgroundColor: "#ffa500",
-    padding: 10,
-    marginTop: 10,
-    borderRadius: 8,
+  edit: {
+    backgroundColor: "orange",
+    flex: 1,
+    marginRight: 5,
+    padding: 8,
     alignItems: "center",
+    borderRadius: 6,
   },
 
-  deleteBtn: {
+  delete: {
     backgroundColor: "red",
-    padding: 10,
-    marginTop: 8,
-    borderRadius: 8,
+    flex: 1,
+    marginLeft: 5,
+    padding: 8,
     alignItems: "center",
+    borderRadius: 6,
   },
 
   btnText: {
@@ -168,5 +172,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 10,
     alignItems: "center",
+    marginBottom: 70,
   },
 });

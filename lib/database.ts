@@ -1,51 +1,78 @@
 import * as SQLite from "expo-sqlite";
 
-// ✅ NEW SAFE API (NO openDatabase, NO tx errors)
 const db = SQLite.openDatabaseSync("notes.db");
 
-// INIT DATABASE
+// MUST RUN ON APP START
 export const initDB = () => {
   db.execSync(`
     CREATE TABLE IF NOT EXISTS notes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT,
       category TEXT,
-      image TEXT
+      image TEXT,
+      noteText TEXT
     );
   `);
 };
 
-// CREATE
+// CREATE NOTE (SAFE + LOGGING)
 export const addNote = (
   title: string,
   category: string,
-  image: string
+  image: string,
+  noteText: string
 ) => {
-  db.runSync(
-    "INSERT INTO notes (title, category, image) VALUES (?, ?, ?)",
-    [title, category, image]
-  );
+  try {
+    console.log("ADDING NOTE:", { title, category, image, noteText });
+
+    db.runSync(
+      `INSERT INTO notes (title, category, image, noteText)
+       VALUES (?, ?, ?, ?)`,
+      [
+        title ?? "",
+        category ?? "",
+        image ?? "",
+        noteText ?? "",
+      ]
+    );
+  } catch (err) {
+    console.log("❌ ADD NOTE ERROR:", err);
+    throw err;
+  }
 };
 
-// READ
+// GET NOTES
 export const getNotes = () => {
-  return db.getAllSync("SELECT * FROM notes");
+  try {
+    return db.getAllSync("SELECT * FROM notes") ?? [];
+  } catch (err) {
+    console.log("❌ GET ERROR:", err);
+    return [];
+  }
 };
 
-// UPDATE
+// UPDATE NOTE
 export const updateNote = (
   id: number,
   title: string,
   category: string,
-  image: string
+  image: string,
+  noteText: string
 ) => {
-  db.runSync(
-    "UPDATE notes SET title=?, category=?, image=? WHERE id=?",
-    [title, category, image, id]
-  );
+  try {
+    db.runSync(
+      `UPDATE notes 
+       SET title=?, category=?, image=?, noteText=? 
+       WHERE id=?`,
+      [title ?? "", category ?? "", image ?? "", noteText ?? "", id]
+    );
+  } catch (err) {
+    console.log("❌ UPDATE ERROR:", err);
+    throw err;
+  }
 };
 
-// DELETE
+// DELETE NOTE
 export const deleteNote = (id: number) => {
-  db.runSync("DELETE FROM notes WHERE id=?", [id]);
+  db.runSync(`DELETE FROM notes WHERE id=?`, [id]);
 };

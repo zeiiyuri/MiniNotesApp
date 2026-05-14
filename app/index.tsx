@@ -32,7 +32,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>POKEMON JOURNAL 🎮</Text>
+      <Text style={styles.title}>ZEIK'S JOURNAL 🎮</Text>
 
       <Text style={styles.subtitle}>Pick Your Pokémon</Text>
 

@@ -16,19 +16,36 @@ import { updateNote } from "../lib/database";
 export default function EditNoteScreen() {
   const params = useLocalSearchParams();
 
-  const [title, setTitle] = useState(params.title as string);
-  const [category, setCategory] = useState(params.category as string);
-  const [image, setImage] = useState(params.image as string);
+  const [title, setTitle] = useState(
+    String(params.title ?? "")
+  );
+
+  const [category, setCategory] = useState(
+    String(params.category ?? "")
+  );
+
+  const [image, setImage] = useState(
+    String(params.image ?? "")
+  );
+
+  const [noteText, setNoteText] = useState(
+    String(params.noteText ?? "")
+  );
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
+    try {
+      const result =
+        await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          quality: 1,
+        });
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+      }
+    } catch (err: any) {
+      Alert.alert("Error", err.message);
     }
   };
 
@@ -36,15 +53,17 @@ export default function EditNoteScreen() {
     try {
       updateNote(
         Number(params.id),
-        title,
-        category,
-        image || ""
+        title ?? "",
+        category ?? "",
+        image ?? "",
+        noteText ?? ""
       );
 
       Alert.alert("Success", "Note updated!");
       router.back();
     } catch (err: any) {
-      Alert.alert("Error", err.message);
+      console.log("UPDATE ERROR:", err);
+      Alert.alert("Error", "Failed to update note");
     }
   };
 
@@ -66,23 +85,48 @@ export default function EditNoteScreen() {
         style={styles.input}
       />
 
+      {/* NOTE TEXT */}
+      <TextInput
+        value={noteText}
+        onChangeText={setNoteText}
+        placeholder="Write note..."
+        multiline
+        style={[styles.input, { height: 120 }]}
+      />
+
+      {/* IMAGE BUTTON */}
       <TouchableOpacity style={styles.btn} onPress={pickImage}>
         <Text style={{ color: "white" }}>Change Image</Text>
       </TouchableOpacity>
 
-      {image ? <Image source={{ uri: image }} style={styles.img} /> : null}
+      {/* IMAGE PREVIEW */}
+      {image ? (
+        <Image source={{ uri: image }} style={styles.img} />
+      ) : null}
 
+      {/* SAVE */}
       <TouchableOpacity style={styles.saveBtn} onPress={saveUpdate}>
-        <Text style={{ color: "white" }}>Save Changes</Text>
+        <Text style={{ color: "white", fontWeight: "bold" }}>
+          Save Changes
+        </Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, justifyContent: "center" },
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "center",
+    backgroundColor: "#f5f5f5",
+  },
 
-  title: { fontSize: 28, fontWeight: "bold", marginBottom: 20 },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
 
   input: {
     backgroundColor: "#fff",

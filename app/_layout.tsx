@@ -2,10 +2,10 @@ import { Stack } from "expo-router";
 import { useEffect } from "react";
 import { initDB } from "../lib/database";
 
-export default function RootLayout() {
+export default function Layout() {
   useEffect(() => {
-    initDB();
+    initDB(); // 🔥 THIS IS REQUIRED
   }, []);
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return <Stack />;
 }
