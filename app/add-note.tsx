@@ -1,5 +1,6 @@
 import {
   Alert,
+  Image,
   StyleSheet,
   Text,
   TextInput,
@@ -7,6 +8,7 @@ import {
   View,
 } from "react-native";
 
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useState } from "react";
 import { addNote } from "../lib/database";
@@ -14,42 +16,44 @@ import { addNote } from "../lib/database";
 export default function AddNoteScreen() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
+  const [image, setImage] = useState("");
 
-  const saveNote = () => {
-    try {
-      if (!title || !category) {
-        throw new Error("All fields required");
-      }
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
 
-      addNote(title, category);
-
-      Alert.alert("Success", "Note added!");
-
-      router.push("/notes");
-    } catch (err: any) {
-      Alert.alert("Error", err.message);
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
     }
+  };
+
+  const save = () => {
+    if (!title || !category) {
+      Alert.alert("Error", "Fill all fields");
+      return;
+    }
+
+    addNote(title, category, image);
+    router.back();
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add Note</Text>
 
-      <TextInput
-        placeholder="Title"
-        value={title}
-        onChangeText={setTitle}
-        style={styles.input}
-      />
+      <TextInput placeholder="Title" value={title} onChangeText={setTitle} style={styles.input} />
+      <TextInput placeholder="Category" value={category} onChangeText={setCategory} style={styles.input} />
 
-      <TextInput
-        placeholder="Category"
-        value={category}
-        onChangeText={setCategory}
-        style={styles.input}
-      />
+      <TouchableOpacity style={styles.btn} onPress={pickImage}>
+        <Text style={{ color: "white" }}>Pick Image</Text>
+      </TouchableOpacity>
 
-      <TouchableOpacity style={styles.btn} onPress={saveNote}>
+      {image ? <Image source={{ uri: image }} style={styles.img} /> : null}
+
+      <TouchableOpacity style={styles.saveBtn} onPress={save}>
         <Text style={{ color: "white" }}>Save</Text>
       </TouchableOpacity>
     </View>
@@ -58,20 +62,28 @@ export default function AddNoteScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, justifyContent: "center" },
-
-  title: { fontSize: 30, fontWeight: "bold", marginBottom: 20 },
+  title: { fontSize: 28, fontWeight: "bold" },
 
   input: {
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     padding: 15,
     marginBottom: 10,
     borderRadius: 10,
   },
 
   btn: {
-    backgroundColor: "#2196F3",
-    padding: 15,
+    backgroundColor: "#444",
+    padding: 10,
     borderRadius: 10,
-    alignItems: "center",
+    marginBottom: 10,
+  },
+
+  img: { width: "100%", height: 200, borderRadius: 10 },
+
+  saveBtn: {
+    backgroundColor: "blue",
+    padding: 15,
+    marginTop: 10,
+    borderRadius: 10,
   },
 });
