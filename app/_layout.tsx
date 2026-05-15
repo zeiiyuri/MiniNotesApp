@@ -4,8 +4,8 @@ import { initDB } from "../lib/database";
 
 export default function Layout() {
   useEffect(() => {
-    initDB(); // 🔥 THIS IS REQUIRED
+    initDB();
   }, []);
 
-  return <Stack />;
+  return <Stack screenOptions={{ headerShown: false }} />;
 }

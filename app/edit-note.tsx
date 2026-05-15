@@ -20,9 +20,13 @@ export default function EditNoteScreen() {
     String(params.title ?? "")
   );
 
+  // ✅ KEEP ORIGINAL CATEGORY AS DEFAULT
   const [category, setCategory] = useState(
     String(params.category ?? "")
   );
+
+  const [customCategory, setCustomCategory] =
+    useState("");
 
   const [image, setImage] = useState(
     String(params.image ?? "")
@@ -32,44 +36,61 @@ export default function EditNoteScreen() {
     String(params.noteText ?? "")
   );
 
-  const pickImage = async () => {
-    try {
-      const result =
-        await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          quality: 1,
-        });
+  const folders = ["Personal", "School", "Work"];
 
-      if (!result.canceled) {
-        setImage(result.assets[0].uri);
-      }
-    } catch (err: any) {
-      Alert.alert("Error", err.message);
+  const pickImage = async () => {
+    const result =
+      await ImagePicker.launchImageLibraryAsync({
+        mediaTypes:
+          ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
     }
   };
 
   const saveUpdate = () => {
     try {
+      const id = Number(params.id);
+
+      if (!id) {
+        Alert.alert("Error", "Invalid note ID");
+        return;
+      }
+
+      const finalCategory =
+        customCategory.trim() !== ""
+          ? customCategory
+          : category; // ✅ KEEP ORIGINAL IF NOT CHANGED
+
       updateNote(
-        Number(params.id),
-        title ?? "",
-        category ?? "",
-        image ?? "",
-        noteText ?? ""
+        id,
+        title,
+        finalCategory,
+        image,
+        noteText
       );
 
       Alert.alert("Success", "Note updated!");
+
       router.back();
     } catch (err: any) {
       console.log("UPDATE ERROR:", err);
-      Alert.alert("Error", "Failed to update note");
+      Alert.alert(
+        "Error",
+        "Failed to update note"
+      );
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Edit Note</Text>
+      <Text style={styles.title}>
+        Edit Note
+      </Text>
 
       <TextInput
         value={title}
@@ -78,35 +99,79 @@ export default function EditNoteScreen() {
         style={styles.input}
       />
 
+      {/* SHOW CURRENT CATEGORY FIRST */}
+      <Text style={styles.label}>
+        Current Folder: {category}
+      </Text>
+
+      {/* FOLDER OPTIONS */}
+      <View style={styles.folderRow}>
+        {folders.map((f) => (
+          <TouchableOpacity
+            key={f}
+            onPress={() => {
+              setCategory(f);
+              setCustomCategory("");
+            }}
+            style={[
+              styles.folderBtn,
+              category === f &&
+                customCategory === "" &&
+                styles.folderActive,
+            ]}
+          >
+            <Text
+              style={{
+                color:
+                  category === f &&
+                  customCategory === ""
+                    ? "white"
+                    : "black",
+              }}
+            >
+              {f}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* CUSTOM CATEGORY INPUT */}
       <TextInput
-        value={category}
-        onChangeText={setCategory}
-        placeholder="Category"
+        placeholder="Or type new folder (optional)"
+        value={customCategory}
+        onChangeText={setCustomCategory}
         style={styles.input}
       />
 
-      {/* NOTE TEXT */}
       <TextInput
+        placeholder="Write note..."
         value={noteText}
         onChangeText={setNoteText}
-        placeholder="Write note..."
         multiline
         style={[styles.input, { height: 120 }]}
       />
 
-      {/* IMAGE BUTTON */}
-      <TouchableOpacity style={styles.btn} onPress={pickImage}>
-        <Text style={{ color: "white" }}>Change Image</Text>
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={pickImage}
+      >
+        <Text style={styles.btnText}>
+          Change Image
+        </Text>
       </TouchableOpacity>
 
-      {/* IMAGE PREVIEW */}
       {image ? (
-        <Image source={{ uri: image }} style={styles.img} />
+        <Image
+          source={{ uri: image }}
+          style={styles.img}
+        />
       ) : null}
 
-      {/* SAVE */}
-      <TouchableOpacity style={styles.saveBtn} onPress={saveUpdate}>
-        <Text style={{ color: "white", fontWeight: "bold" }}>
+      <TouchableOpacity
+        style={styles.saveBtn}
+        onPress={saveUpdate}
+      >
+        <Text style={styles.saveText}>
           Save Changes
         </Text>
       </TouchableOpacity>
@@ -135,11 +200,42 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
+  label: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+
+  folderRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 10,
+  },
+
+  folderBtn: {
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginRight: 5,
+    marginBottom: 5,
+  },
+
+  folderActive: {
+    backgroundColor: "green",
+    borderColor: "green",
+  },
+
   btn: {
     backgroundColor: "#444",
     padding: 12,
     borderRadius: 10,
     marginBottom: 10,
+    alignItems: "center",
+  },
+
+  btnText: {
+    color: "white",
+    fontWeight: "bold",
   },
 
   img: {
@@ -154,5 +250,10 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
+  },
+
+  saveText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });

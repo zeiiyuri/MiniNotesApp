@@ -15,53 +15,41 @@ import { addNote } from "../lib/database";
 
 export default function AddNoteScreen() {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Personal");
+  const [customCategory, setCustomCategory] = useState("");
   const [image, setImage] = useState("");
   const [noteText, setNoteText] = useState("");
 
-  // PICK IMAGE
+  const folders = ["Personal", "School", "Work"];
+
   const pickImage = async () => {
-    try {
-      const permission =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
 
-      if (!permission.granted) {
-        Alert.alert("Permission needed", "Please allow photo access.");
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        setImage(result.assets[0].uri);
-      }
-    } catch (error: any) {
-      Alert.alert("Error", error.message);
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
     }
   };
 
-  // SAVE NOTE (FIXED)
   const saveNote = () => {
-    try {
-      if (!title.trim() || !category.trim()) {
-        Alert.alert("Error", "Please fill title and category");
-        return;
-      }
-
-      // 🔥 FIX: MATCH DATABASE FUNCTION EXACTLY
-      addNote(title, category, image, noteText);
-
-      Alert.alert("Success", "Note saved!");
-
-      router.back();
-    } catch (err: any) {
-      console.log("SAVE ERROR:", err);
-      Alert.alert("Error", "Failed to save note");
+    if (!title.trim()) {
+      Alert.alert("Error", "Title is required");
+      return;
     }
+
+    // FINAL CATEGORY (CUSTOM OVERRIDE)
+    const finalCategory =
+      customCategory.trim() !== ""
+        ? customCategory
+        : category;
+
+    addNote(title, finalCategory, image, noteText);
+
+    Alert.alert("Success", "Note saved!");
+    router.back();
   };
 
   return (
@@ -75,14 +63,49 @@ export default function AddNoteScreen() {
         style={styles.input}
       />
 
+      {/* DEFAULT FOLDERS */}
+      <Text style={styles.label}>
+        Select Folder:
+      </Text>
+
+      <View style={styles.folderRow}>
+        {folders.map((f) => (
+          <TouchableOpacity
+            key={f}
+            onPress={() => {
+              setCategory(f);
+              setCustomCategory("");
+            }}
+            style={[
+              styles.folderBtn,
+              category === f &&
+                customCategory === "" &&
+                styles.folderActive,
+            ]}
+          >
+            <Text
+              style={{
+                color:
+                  category === f &&
+                  customCategory === ""
+                    ? "white"
+                    : "black",
+              }}
+            >
+              {f}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* CUSTOM CATEGORY INPUT */}
       <TextInput
-        placeholder="Category"
-        value={category}
-        onChangeText={setCategory}
+        placeholder="Or type custom folder..."
+        value={customCategory}
+        onChangeText={setCustomCategory}
         style={styles.input}
       />
 
-      {/* OPTIONAL NOTE TEXT */}
       <TextInput
         placeholder="Write note..."
         value={noteText}
@@ -91,19 +114,29 @@ export default function AddNoteScreen() {
         style={[styles.input, { height: 120 }]}
       />
 
-      {/* PICK IMAGE */}
-      <TouchableOpacity style={styles.btn} onPress={pickImage}>
-        <Text style={styles.btnText}>Pick Image</Text>
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={pickImage}
+      >
+        <Text style={styles.btnText}>
+          Pick Image
+        </Text>
       </TouchableOpacity>
 
-      {/* IMAGE PREVIEW */}
       {image ? (
-        <Image source={{ uri: image }} style={styles.image} />
+        <Image
+          source={{ uri: image }}
+          style={styles.image}
+        />
       ) : null}
 
-      {/* SAVE */}
-      <TouchableOpacity style={styles.saveBtn} onPress={saveNote}>
-        <Text style={styles.saveText}>Save Note</Text>
+      <TouchableOpacity
+        style={styles.saveBtn}
+        onPress={saveNote}
+      >
+        <Text style={styles.saveText}>
+          Save Note
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -128,6 +161,31 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     borderRadius: 10,
+  },
+
+  label: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+
+  folderRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 10,
+  },
+
+  folderBtn: {
+    padding: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginRight: 5,
+    marginBottom: 5,
+  },
+
+  folderActive: {
+    backgroundColor: "green",
+    borderColor: "green",
   },
 
   btn: {

@@ -1,45 +1,96 @@
 import { useLocalSearchParams } from "expo-router";
-import { Image, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function DetailScreen() {
-  const { title, category, image, note } = useLocalSearchParams();
+
+  const {
+    title,
+    category,
+    image,
+    noteText,
+  } = useLocalSearchParams();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.category}>{category}</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+
+      <Text style={styles.title}>
+        {String(title)}
+      </Text>
+
+      <Text style={styles.category}>
+        {String(category)}
+      </Text>
 
       {image ? (
-        <Image source={{ uri: String(image) }} style={styles.image} />
+        <Image
+          source={{ uri: String(image) }}
+          style={styles.image}
+        />
       ) : null}
 
       <View style={styles.noteBox}>
-        <Text style={styles.noteTitle}>Private Note</Text>
-        <Text>{note ? String(note) : "No note added"}</Text>
+        <Text style={styles.noteTitle}>
+          Private Note
+        </Text>
+
+        <Text style={styles.noteText}>
+          {noteText
+            ? String(noteText)
+            : "No note added"}
+        </Text>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-  flex: 1,
-  paddingTop: 60,
-  paddingHorizontal: 20,
-  backgroundColor: "#f5f5f5",
-},
-
-  title: { fontSize: 28, fontWeight: "bold" },
-  category: { color: "gray" },
-
-  image: { width: "100%", height: 250, borderRadius: 10 },
-
-  noteBox: {
-    marginTop: 20,
-    padding: 15,
-    backgroundColor: "#eee",
-    borderRadius: 10,
+    padding: 20,
+    paddingTop: 80,
+    paddingBottom: 40,
+    backgroundColor: "#f5f5f5",
+    flexGrow: 1,
   },
 
-  noteTitle: { fontWeight: "bold", marginBottom: 5 },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+
+  category: {
+    color: "gray",
+    marginBottom: 20,
+    fontSize: 16,
+  },
+
+  image: {
+    width: "100%",
+    height: 250,
+    borderRadius: 12,
+    marginBottom: 20,
+  },
+
+  noteBox: {
+    backgroundColor: "#fff",
+    padding: 15,
+    borderRadius: 12,
+  },
+
+  noteTitle: {
+    fontWeight: "bold",
+    marginBottom: 10,
+    fontSize: 16,
+  },
+
+  noteText: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
 });
