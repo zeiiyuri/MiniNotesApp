@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "MiniNotesApp",
-    "slug": "MiniNotesApp",
+    "name": "CounterApp",
+    "slug": "CounterApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mininotesapp",
+    "scheme": "counterapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -19,8 +19,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.zeiiyuri.MiniNotesApp"
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
@@ -39,18 +38,11 @@
             "backgroundColor": "#000000"
           }
         }
-      ],
-      "expo-sqlite"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "93dca998-e276-46ee-a734-0ed592c1c4af"
-      }
     }
   }
 }

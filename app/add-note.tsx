@@ -40,7 +40,6 @@ export default function AddNoteScreen() {
       return;
     }
 
-    // FINAL CATEGORY (CUSTOM OVERRIDE)
     const finalCategory =
       customCategory.trim() !== ""
         ? customCategory
@@ -60,11 +59,10 @@ export default function AddNoteScreen() {
         placeholder="Title"
         value={title}
         onChangeText={setTitle}
-        style={styles.input}
+        style={[styles.input, { color: "#ad349d", fontWeight: "bold", fontSize: 16 }]}
       />
 
-      {/* DEFAULT FOLDERS */}
-      <Text style={styles.label}>
+      <Text style={[styles.label, { color: "#69145e" }]}>
         Select Folder:
       </Text>
 
@@ -88,8 +86,8 @@ export default function AddNoteScreen() {
                 color:
                   category === f &&
                   customCategory === ""
-                    ? "white"
-                    : "black",
+                    ? "#69145e"
+                    : "white",
               }}
             >
               {f}
@@ -98,12 +96,11 @@ export default function AddNoteScreen() {
         ))}
       </View>
 
-      {/* CUSTOM CATEGORY INPUT */}
       <TextInput
         placeholder="Or type custom folder..."
         value={customCategory}
         onChangeText={setCustomCategory}
-        style={styles.input}
+        style={[styles.input, { color: "#ad349d", fontWeight: "bold", fontSize: 16 }]}
       />
 
       <TextInput
@@ -111,14 +108,14 @@ export default function AddNoteScreen() {
         value={noteText}
         onChangeText={setNoteText}
         multiline
-        style={[styles.input, { height: 120 }]}
+        style={[styles.input, { height: 120, color: "#ad349d", fontWeight: "bold", fontSize: 16 }]}
       />
 
       <TouchableOpacity
         style={styles.btn}
         onPress={pickImage}
       >
-        <Text style={styles.btnText}>
+        <Text style={[styles.btnText, { color: "#ad349d"}]}>
           Pick Image
         </Text>
       </TouchableOpacity>
@@ -147,12 +144,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#cc89dd",
   },
 
   title: {
     fontSize: 28,
     fontWeight: "bold",
+    color: "#69145e",
     marginBottom: 20,
   },
 
@@ -161,6 +159,8 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     borderRadius: 10,
+    borderColor: "#69145e",
+    borderWidth: 1.5,
   },
 
   label: {
@@ -176,20 +176,20 @@ const styles = StyleSheet.create({
 
   folderBtn: {
     padding: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    borderWidth: 1.5,
+    borderColor: "#ff0062",
     borderRadius: 8,
     marginRight: 5,
     marginBottom: 5,
   },
 
   folderActive: {
-    backgroundColor: "green",
-    borderColor: "green",
+    backgroundColor: "#ffa7c9",
+    borderColor: "#ff0062",
   },
 
   btn: {
-    backgroundColor: "#444",
+    backgroundColor: "#fdc7dc",
     padding: 12,
     borderRadius: 10,
     alignItems: "center",
@@ -205,11 +205,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     borderRadius: 10,
+    borderColor: "#ffabcb",
+    borderWidth: 1.5,
     marginBottom: 10,
   },
 
   saveBtn: {
-    backgroundColor: "green",
+    backgroundColor: "#ca49b9",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",

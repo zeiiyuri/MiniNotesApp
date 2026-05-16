@@ -20,7 +20,6 @@ export default function EditNoteScreen() {
     String(params.title ?? "")
   );
 
-  // ✅ KEEP ORIGINAL CATEGORY AS DEFAULT
   const [category, setCategory] = useState(
     String(params.category ?? "")
   );
@@ -64,7 +63,7 @@ export default function EditNoteScreen() {
       const finalCategory =
         customCategory.trim() !== ""
           ? customCategory
-          : category; // ✅ KEEP ORIGINAL IF NOT CHANGED
+          : category; 
 
       updateNote(
         id,
@@ -96,15 +95,13 @@ export default function EditNoteScreen() {
         value={title}
         onChangeText={setTitle}
         placeholder="Title"
-        style={styles.input}
+        style={[styles.input, { color: "#ad349d", fontWeight: "bold", fontSize: 16 }]}
       />
 
-      {/* SHOW CURRENT CATEGORY FIRST */}
       <Text style={styles.label}>
         Current Folder: {category}
       </Text>
 
-      {/* FOLDER OPTIONS */}
       <View style={styles.folderRow}>
         {folders.map((f) => (
           <TouchableOpacity
@@ -125,8 +122,8 @@ export default function EditNoteScreen() {
                 color:
                   category === f &&
                   customCategory === ""
-                    ? "white"
-                    : "black",
+                    ? "#69145e"
+                    : "white",
               }}
             >
               {f}
@@ -135,12 +132,11 @@ export default function EditNoteScreen() {
         ))}
       </View>
 
-      {/* CUSTOM CATEGORY INPUT */}
       <TextInput
         placeholder="Or type new folder (optional)"
         value={customCategory}
         onChangeText={setCustomCategory}
-        style={styles.input}
+        style={[styles.input, { color: "#ad349d", fontWeight: "bold", fontSize: 14 }]}
       />
 
       <TextInput
@@ -148,14 +144,14 @@ export default function EditNoteScreen() {
         value={noteText}
         onChangeText={setNoteText}
         multiline
-        style={[styles.input, { height: 120 }]}
+        style={[styles.input, { height: 120, color: "#ad349d", fontWeight: "bold", fontSize: 16 }]}
       />
 
       <TouchableOpacity
         style={styles.btn}
         onPress={pickImage}
       >
-        <Text style={styles.btnText}>
+        <Text style={[styles.btnText, { color: "#ad349d"}]}>
           Change Image
         </Text>
       </TouchableOpacity>
@@ -184,12 +180,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#cc89dd",
   },
 
   title: {
     fontSize: 28,
     fontWeight: "bold",
+    color: "#69145e",
     marginBottom: 20,
   },
 
@@ -198,10 +195,13 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     borderRadius: 10,
+    borderColor: "#69145e",
+    borderWidth: 1.5,
   },
 
   label: {
     fontWeight: "bold",
+    color: "#ffffff",
     marginBottom: 5,
   },
 
@@ -213,20 +213,20 @@ const styles = StyleSheet.create({
 
   folderBtn: {
     padding: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    borderWidth: 1.5,
+    borderColor: "#ff0062",
     borderRadius: 8,
     marginRight: 5,
     marginBottom: 5,
   },
 
   folderActive: {
-    backgroundColor: "green",
-    borderColor: "green",
+    backgroundColor: "#ffa7c9",
+    borderColor: "#ff0062",
   },
 
   btn: {
-    backgroundColor: "#444",
+    backgroundColor: "#fdc7dc",
     padding: 12,
     borderRadius: 10,
     marginBottom: 10,
@@ -242,11 +242,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     borderRadius: 10,
+    borderColor: "#ffabcb",
+    borderWidth: 1.5,
     marginBottom: 10,
   },
 
   saveBtn: {
-    backgroundColor: "green",
+    backgroundColor: "#ca49b9",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",

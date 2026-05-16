@@ -37,7 +37,7 @@ export default function HomeScreen() {
       <Text style={styles.subtitle}>Pick Your Pokémon</Text>
 
       {loading ? (
-        <ActivityIndicator size="large" color="#ffcc00" />
+        <ActivityIndicator size="large" color="npx expo start" />
       ) : (
         pokemon && (
           <View style={styles.card}>
@@ -73,7 +73,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1e1e2f",
+    backgroundColor: "#cc89dd",
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
@@ -82,18 +82,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "white",
+    color: "#69145e",
     marginBottom: 10,
   },
 
   subtitle: {
     fontSize: 16,
-    color: "#aaa",
+    color: "#69145e",
     marginBottom: 20,
   },
 
   card: {
-    backgroundColor: "#2c2c3e",
+    backgroundColor: "#ff98c0",
     padding: 20,
     borderRadius: 15,
     alignItems: "center",
@@ -108,21 +108,22 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#69145e",
     marginTop: 10,
   },
 
   button: {
-    backgroundColor: "#ffcc00",
+    backgroundColor: "#ca49b9",
     padding: 12,
     borderRadius: 10,
     marginTop: 10,
     fontWeight: "bold",
+    color:"#f0bacf"
   },
 
   notesBtn: {
     marginTop: 15,
-    color: "#4da6ff",
+    color: "#fcccde",
     fontSize: 16,
   },
 });

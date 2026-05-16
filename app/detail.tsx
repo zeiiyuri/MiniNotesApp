@@ -54,38 +54,45 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 80,
     paddingBottom: 40,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#cc89dd",
     flexGrow: 1,
   },
 
   title: {
     fontSize: 28,
     fontWeight: "bold",
+    color: "#69145e",
     marginBottom: 5,
   },
 
   category: {
-    color: "gray",
+    color: "#ffffff",
+    fontWeight: "bold",
     marginBottom: 20,
     fontSize: 16,
   },
 
-  image: {
+    image: {
     width: "100%",
     height: 250,
     borderRadius: 12,
-    marginBottom: 20,
+    borderColor: "#ffabcb",
+    borderWidth: 1.5,
+    marginBottom: 15,
   },
 
   noteBox: {
     backgroundColor: "#fff",
     padding: 15,
     borderRadius: 12,
+    borderColor: "#69145e",
+    borderWidth: 1.5,
   },
 
   noteTitle: {
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#fd69a2",
     fontSize: 16,
   },
 

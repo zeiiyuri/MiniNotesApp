@@ -23,7 +23,6 @@ export default function NotesScreen() {
   const [selectedNote, setSelectedNote] = useState<any | null>(null);
   const [menuVisible, setMenuVisible] = useState(false);
 
-  // ✅ LOAD NOTES
   const loadNotes = () => {
     try {
       const data = getNotes();
@@ -34,12 +33,10 @@ export default function NotesScreen() {
     }
   };
 
-  // ✅ FIXED REFRESH (ONLY ONE SAFE HOOK)
   useFocusEffect(
     useCallback(() => {
       loadNotes();
 
-      // small delay ensures DB is updated after navigation back
       const timeout = setTimeout(() => {
         loadNotes();
       }, 200);
@@ -74,12 +71,12 @@ export default function NotesScreen() {
 
   const getCategoryColor = (category: string) => {
     const colors = [
-      "#3498db",
-      "#e67e22",
+      "#34dbdb",
+      "#f064aa",
       "#9b59b6",
       "#2ecc71",
       "#e74c3c",
-      "#f1c40f",
+      "#f1a258",
     ];
 
     let hash = 0;
@@ -94,7 +91,6 @@ export default function NotesScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>My Notes</Text>
 
-      {/* FILTER */}
       <View style={styles.filterBar}>
         {folders.map(folder => (
           <TouchableOpacity
@@ -115,7 +111,6 @@ export default function NotesScreen() {
         ))}
       </View>
 
-      {/* NOTES LIST */}
       <FlatList
         data={sortedNotes}
         keyExtractor={(item) => String(item.id)}
@@ -147,14 +142,12 @@ export default function NotesScreen() {
         )}
       />
 
-      {/* MODAL */}
       <Modal visible={menuVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalBox}>
 
             <Text style={styles.modalTitle}>Choose Action</Text>
 
-            {/* PIN */}
             <TouchableOpacity
               style={styles.modalBtn}
               onPress={() => {
@@ -169,12 +162,11 @@ export default function NotesScreen() {
                 closeMenu();
               }}
             >
-              <Text style={styles.modalText}>
+              <Text style={[styles.modalText, { color: "#ad349d" }]}>
                 {selectedNote?.pinned ? "Unpin" : "Pin"}
               </Text>
             </TouchableOpacity>
 
-            {/* EDIT */}
             <TouchableOpacity
               style={styles.modalBtn}
               onPress={() => {
@@ -188,10 +180,9 @@ export default function NotesScreen() {
                 });
               }}
             >
-              <Text style={styles.modalText}>Edit</Text>
+              <Text style={[styles.modalText, { color: "#ad349d" }]}>Edit</Text>
             </TouchableOpacity>
 
-            {/* DELETE */}
             <TouchableOpacity
               style={styles.modalBtn}
               onPress={() => {
@@ -216,19 +207,17 @@ export default function NotesScreen() {
               </Text>
             </TouchableOpacity>
 
-            {/* CANCEL */}
             <TouchableOpacity
               style={styles.modalBtn}
               onPress={closeMenu}
             >
-              <Text style={styles.modalText}>Cancel</Text>
+              <Text style={[styles.modalText, { color: "#ad349d" }]}>Cancel</Text>
             </TouchableOpacity>
 
           </View>
         </View>
       </Modal>
 
-      {/* ADD BUTTON */}
       <TouchableOpacity
         style={styles.addBtn}
         onPress={() => router.push("/add-note")}
@@ -244,10 +233,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 80,
     paddingHorizontal: 20,
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "#cc89dd",
   },
 
   title: {
+    color: "#69145e",
     fontSize: 28,
     fontWeight: "bold",
     marginBottom: 10,
@@ -261,46 +251,51 @@ const styles = StyleSheet.create({
 
   filterBtn: {
     padding: 6,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    borderWidth: 1.5,
+    borderColor: "#69145e",
     borderRadius: 20,
     marginRight: 8,
     marginBottom: 8,
-    backgroundColor: "#fff",
+    backgroundColor: "#ff98c0",
   },
 
   filterActive: {
-    backgroundColor: "green",
+    backgroundColor: "#69145e",
   },
 
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
     padding: 15,
     marginBottom: 10,
     borderRadius: 10,
+    borderColor: "#69145e",
+    borderWidth: 1.5,
   },
 
   noteTitle: {
     fontWeight: "bold",
+    color: "#fd69a2",
+    fontSize: 18,
   },
 
   category: {
-    color: "gray",
+    color: "#a54298",
   },
 
   pinnedText: {
     marginTop: 5,
-    color: "#f39c12",
+    color: "#46c0ba",
     fontWeight: "bold",
   },
 
   addBtn: {
-    backgroundColor: "green",
+    backgroundColor: "#ca49b9",
     padding: 15,
     borderRadius: 10,
     marginTop: 10,
     alignItems: "center",
     marginBottom: 70,
+    color:"#f0bacf",
   },
 
   modalOverlay: {
@@ -312,13 +307,16 @@ const styles = StyleSheet.create({
 
   modalBox: {
     width: "80%",
-    backgroundColor: "#fff",
+    backgroundColor: "#fac2d8",
     borderRadius: 10,
+    borderColor: "#69145e",
+    borderWidth: 2,
     padding: 20,
   },
 
   modalTitle: {
     fontSize: 18,
+    color: "#ff619e",
     fontWeight: "bold",
     marginBottom: 10,
     textAlign: "center",
